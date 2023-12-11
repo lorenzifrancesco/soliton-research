@@ -33,9 +33,9 @@ includet("init/_plot_settings.jl")
 
 includet("examples/plot_axial_evolution.jl")
 includet("examples/plot_isosurfaces.jl")
-includet("scripts/visual_utils.jl")
+includet("utils/visual_utils.jl")
 includet("init/init.jl")
-includet("scripts/sim_utils.jl")
+includet("utils/sim_utils.jl")
 
 
 includet("scripts/solitons.jl")
@@ -45,7 +45,7 @@ includet("scripts/lines.jl")
 
 includet("scripts/tiles.jl")
 includet("scripts/chempot.jl")
-includet("scripts/aux_collapse.jl")
-includet("scripts/aux_gs.jl")
-includet("scripts/aux_collision.jl")
-includet("scripts/aux_sigma2.jl")
+includet("auxiliary_scripts/aux_collapse.jl")
+includet("auxiliary_scripts/aux_gs.jl")
+includet("auxiliary_scripts/aux_collision.jl")
+includet("auxiliary_scripts/aux_sigma2.jl")

@@ -2,7 +2,6 @@ using LaTeXStrings, Plots
 import GR
 using CondensateDynamics
 using OrdinaryDiffEq
-using LSODA
 import CondensateDynamics.V
 gr()
 GR.usecolorscheme(1)

@@ -3,7 +3,6 @@ import GR
 using CondensateDynamics
 using OrdinaryDiffEq
 using DiffEqCallbacks
-using LSODA
 import CondensateDynamics.V
 import FFTW
 import JLD2
