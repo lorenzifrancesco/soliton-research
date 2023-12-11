@@ -23,7 +23,7 @@ const plt = pyimport("matplotlib.pyplot")
 # plt.rcParams["lines.linewidth"] = 2
 # Set other parameters as needed
 
-includet("_plot_settings.jl")
+includet("init/_plot_settings.jl")
 # pyplot(size=(350, 220))
 # if ENV["USER"] == "ubuntu"
 #   plotly()
@@ -31,37 +31,21 @@ includet("_plot_settings.jl")
 #   pyplot()
 # end
 
-includet("../examples/plot_axial_evolution.jl")
-includet("../examples/plot_isosurfaces.jl")
-includet("visual_utils.jl")
-includet("init.jl")
-includet("sim_utils.jl")
+includet("examples/plot_axial_evolution.jl")
+includet("examples/plot_isosurfaces.jl")
+includet("scripts/visual_utils.jl")
+includet("init/init.jl")
+includet("scripts/sim_utils.jl")
 
 
-```
-    file signature:
-```
-includet("solitons.jl")
+includet("scripts/solitons.jl")
+
+includet("scripts/lines.jl")
 
 
-```
-    file signature:
-    tran.JLD2
-    refl.JLD2
-```
-includet("lines.jl")
-
-
-```
-    file signature:
-```
-includet("tiles.jl")
-
-includet("chempot.jl")
-
-
-includet("aux_collapse.jl")
-includet("aux_gs.jl")
-includet("aux_collision.jl")
-includet("aux_sigma2.jl")
-includet("checking.jl")
+includet("scripts/tiles.jl")
+includet("scripts/chempot.jl")
+includet("scripts/aux_collapse.jl")
+includet("scripts/aux_gs.jl")
+includet("scripts/aux_collision.jl")
+includet("scripts/aux_sigma2.jl")
