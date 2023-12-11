@@ -1,0 +1,10 @@
+# execution-specific output files and logs
+*.pdf
+*.png
+*.txt
+*.jld2
+*.h5
+.vscode
+development_notes.md
+media
+results
