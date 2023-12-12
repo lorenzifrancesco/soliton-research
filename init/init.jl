@@ -490,16 +490,16 @@ function load_parameters_alt(
         push!(sim_dictionary, "G1" => sim_gpe_1d)
     end
 
-    # =========================================================
-    ## CQGPE 
-    sim_ccgpe = deepcopy(sim_gpe_1d)
-    @unpack_Sim sim_ccgpe
-    equation = CQGPE
-    @pack_Sim! sim_ccgpe
+    # # =========================================================
+    # ## CQGPE 
+    # sim_ccgpe = deepcopy(sim_gpe_1d)
+    # @unpack_Sim sim_ccgpe
+    # equation = CQGPE
+    # @pack_Sim! sim_ccgpe
 
-    if "CQ" in eqs
-      push!(sim_dictionary, "CQ" => sim_ccgpe)
-    end
+    # if "CQ" in eqs
+    #   push!(sim_dictionary, "CQ" => sim_ccgpe)
+    # end
 
     # =========================================================
     ## NPSE

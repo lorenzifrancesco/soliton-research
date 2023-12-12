@@ -2,7 +2,11 @@ JULIA_CUDA_SOFT_MEMORY_LIMIT = "95%"
 
 function tiles(; 
   use_precomputed_tiles=false,
-  return_maximum=false)
+  return_maximum=false,
+  tile_number=2)
+  
+  # FIXME
+  FFTW.set_num_threads(1)
   pyplot()
   if Threads.nthreads() == 1
     @warn "running in single thread mode!"
@@ -15,9 +19,11 @@ function tiles(;
 
   for gamma in gamma_list
     @info "==== Using gamma: " gamma
+    equation_selection = ["Np"]
     sd = load_parameters_alt(gamma_param=gamma; nosaves=true)
+    sd = filter(p -> (first(p) in equation_selection), sd)
     @info "Required simulations: " keys(sd)
-    # prepare_for_collision!(sd, gamma)
+    prepare_for_collision!(sd, gamma)
 
     # check the extremes for stability
     if false
@@ -42,11 +48,12 @@ function tiles(;
     end
 
     for (name, sim) in sd
-      @info "Tiling " name
+      @info "======>Tiling " name
       if haskey(tile_dict, hs(name, gamma)) && use_precomputed_tiles
         @info "Already found tile for " name, gamma
       else
-        tile = get_tiles(sim, name; tiles=10)
+        tile = get_tiles(sim, name; tiles=tile_number)
+        @info "==== Saving tiles"
         push!(tile_dict, hs(name, gamma) => tile)
         JLD2.save(save_path * "tile_dict.jld2", tile_dict)
       end
@@ -358,8 +365,7 @@ function view_all_tiles()
     # display(ht_comp)
     savefig(ht_comp, "media/tiles_ht_comp.pdf")
   catch err
-    @info "not plotting comparison"
-    rethrow(err)
+    throw("Not plotting comparison")
   end
 end
 

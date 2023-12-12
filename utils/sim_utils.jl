@@ -1,3 +1,48 @@
+```
+ max g allowable for hashing = -5.0, 5.0
+```
+function hs(eq::String, g::Float64)
+  @assert eq in ["G1", "N", "CQ", "Np", "G3"]
+  if g <= -5.0
+    @warn "Collapse regime selected"
+    return string(666666)
+  end
+  n = 0
+  if eq == "G1"
+    n += 0
+  elseif eq == "N"
+    n += 1000
+  elseif eq == "Np"
+    n += 2000
+  elseif eq == "G3"
+    n += 3000
+  elseif eq == "CQ"
+    n += 4000
+  else
+    throw("Unknown equation")
+  end
+  n += Int(round(g * 100))
+  # print("\nCompute hash: ", n, "\n")
+  return string(n)
+end
+
+
+function ihs(s::String)
+  n = parse(Int, s)
+  if n < 500
+    return ("G1", n / 100)
+  elseif n < 1500
+    return ("N", (n - 1000) / 100)
+  elseif n < 2500
+    return ("Np", (n - 2000) / 100)
+  elseif n < 3500
+    return ("G3", (n - 3000) / 100)
+  else
+    return ("CQ", (n - 4000) / 100)
+  end
+end
+
+
 function prepare_in_ground_state!(sim::Sim{1, Array{Complex{Float64}}})
     # compute the ground state
     # start from a convenient initial state (it doesn't matter by the way)
@@ -99,10 +144,8 @@ function prepare_for_collision!(
             @info "---> Found in library item " (name, gamma)
         else
             @info "---> Computing item..." (name, gamma)
-            @warn "one"
             uu = get_ground_state(sim; info=info)
             push!(gs_dict, hs(name, gamma) => uu)
-            @warn "two"
             JLD2.save(save_path * "gs_dict.jld2", gs_dict)
         end
         uu = JLD2.load(save_path * "gs_dict.jld2", hs(name, gamma))
@@ -117,8 +160,6 @@ function prepare_for_collision!(
             psi_0 = uu
             xspace!(psi_0, sim)
             psi_0 .= circshift(psi_0, shift)
-            @info length(psi_0)
-            @info N
             kspace!(psi_0, sim)
             @assert isapprox(nsk(psi_0, sim), 1.0, atol=1e-9)
             time_steps  = Int(ceil((tf-ti)/dt))

@@ -1,55 +1,10 @@
-```
- max g allowable for hashing = -5.0, 5.0
-```
-function hs(eq::String, g::Float64)
-  @assert eq in ["G1", "N", "CQ", "Np", "G3"]
-  if g <= -5.0
-    @warn "Collapse regime selected"
-    return string(666666)
-  end
-  n = 0
-  if eq == "G1"
-    n += 0
-  elseif eq == "N"
-    n += 1000
-  elseif eq == "Np"
-    n += 2000
-  elseif eq == "G3"
-    n += 3000
-  elseif eq == "CQ"
-    n += 4000
-  else
-    throw("Unknown equation")
-  end
-  n += Int(round(g * 100))
-  # print("\nCompute hash: ", n, "\n")
-  return string(n)
-end
-
-
-function ihs(s::String)
-  n = parse(Int, s)
-  if n < 500
-    return ("G1", n / 100)
-  elseif n < 1500
-    return ("N", (n - 1000) / 100)
-  elseif n < 2500
-    return ("Np", (n - 2000) / 100)
-  elseif n < 3500
-    return ("G3", (n - 3000) / 100)
-  else
-    return ("CQ", (n - 4000) / 100)
-  end
-end
-
-
 function solitons(
   ; plus::Bool=false,
   use_precomputed::Bool=true,
-  take_advantage::Bool=false,
+  take_advantage::Bool=true,
   saveplots::Bool=true,
   show_plots::Bool=false,
-  info::Bool=false
+  info::Bool=true
 )
   pyplot(size=(359, 220))
   sd = load_parameters_alt()
@@ -73,7 +28,7 @@ function solitons(
     # update simulation parameters
     set_g!.(values(sd), gamma_param)
     sim_gpe_1d = sd["G1"]
-    sim_cc = sd["CQ"]
+    # sim_cc = sd["CQ"]
     sim_npse = sd["N"]
     sim_npse_plus = sd["Np"]
     sim_gpe_3d = sd["G3"]
@@ -112,46 +67,47 @@ function solitons(
     plot_final_density!(p, [gpe_1d], sim_gpe_1d; label="1D-GPE", color=:grey, ls=:solid)
     JLD2.save(join([save_path, "gs_dict.jld2"]), gs_dict)
 
-    # == CQGPE =======================================================
-    time_requirement[2] = @elapsed begin
-      if take_advantage
-        sim_cc.psi_0 = gpe_1d
-      end
-      if haskey(gs_dict, hs("CQ", gamma_param))
-        if use_precomputed
-          @info "\t CQ:    |  x  "
-        else
-          @info "\t CQ:  x |     (deleting)"
-          delete!(gs_dict, hs("CQ", gamma_param))
-          try
-            sol = runsim(sim_cc; info=info)
-            @info "total imaginary time $(sol.cnt * sim_cc.dt)"
-          catch err
-            if isa(err, Gpe3DCollapse)
-              @warn "Cubic Quintic collapsed"
-            else
-              throw(err)
-            end
-          end
-          push!(gs_dict, hs("CQ", gamma_param) => sol.u)
-        end
-      else
-        @info "\t CQ:  x |     "
-        try
-          sol = runsim(sim_cc; info=info)
-        catch err
-          if isa(err, Gpe3DCollapse)
-            @warn "Cubic Quintic collapsed"
-          else
-            throw(err)
-          end
-        end
-        push!(gs_dict, hs("CQ", gamma_param) => sol.u)
-      end
-    end
-    cc = gs_dict[hs("CQ", gamma_param)]
-    # plot_final_density!(p, [cc], sim_cc; label="CQ-GPE", color=:blue, ls=:dashdot)
-    JLD2.save(join([save_path, "gs_dict.jld2"]), gs_dict)
+    # # == CQGPE =======================================================
+    # time_requirement[2] = @elapsed begin
+    #   if take_advantage
+    #     sim_cc.psi_0 = gpe_1d
+    #   end
+    #   if haskey(gs_dict, hs("CQ", gamma_param))
+    #     if use_precomputed
+    #       @info "\t CQ:    |  x  "
+    #     else
+    #       @info "\t CQ:  x |     (deleting)"
+    #       delete!(gs_dict, hs("CQ", gamma_param))
+    #       try
+    #         sol = runsim(sim_cc; info=info)
+    #         @info "total imaginary time $(sol.cnt * sim_cc.dt)"
+    #       catch err
+    #         if isa(err, Gpe3DCollapse)
+    #           @warn "Cubic Quintic collapsed"
+    #         else
+    #           throw(err)
+    #         end
+    #       end
+    #       push!(gs_dict, hs("CQ", gamma_param) => sol.u)
+    #     end
+    #   else
+    #     @info "\t CQ:  x |     "
+    #     try
+    #       sol = runsim(sim_cc; info=info)
+    #     catch err
+    #       if isa(err, Gpe3DCollapse)
+    #         @warn "Cubic Quintic collapsed"
+    #       else
+    #         throw(err)
+    #       end
+    #     end
+    #     push!(gs_dict, hs("CQ", gamma_param) => sol.u)
+    #   end
+    # end
+    # cc = gs_dict[hs("CQ", gamma_param)]
+    # # plot_final_density!(p, [cc], sim_cc; label="CQ-GPE", color=:blue, ls=:dashdot)
+    # JLD2.save(join([save_path, "gs_dict.jld2"]), gs_dict)
+
     # == NPSE =======================================================
     time_requirement[3] = @elapsed begin
       # estimate width
@@ -349,7 +305,6 @@ end
 
 function get_ground_state(sim; info=false)
   @assert sim.iswitch == -im
-  @warn "one half"
   res = Array(runsim(sim; info=info).u)
   @assert size(res) == sim.N
   return res
