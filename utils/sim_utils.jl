@@ -80,17 +80,15 @@ end
 
 function prepare_for_collision!(sd, gamma; use_precomputed_gs=false, info=false)
     save_path = "results/"
-    # prepare ground states (saving them)
     if isfile(save_path * "gs_dict.jld2")
         @info "[Loading GS library...]"
         gs_dict = JLD2.load(save_path * "gs_dict.jld2")
+        @info "[Done ]"
     else
         @info "No GS library found! Saving an empty one..."
         gs_dict = Dict()
         JLD2.save(save_path * "gs_dict.jld2", gs_dict)
     end
-    # preparing all simulations for the tiling (as archetypes)
-    # automatic load as much as possible
     for (name, sim) in sd
         if haskey(gs_dict, hs(name, gamma)) && use_precomputed_gs
             @info "---> Found in library item " (name, gamma)
