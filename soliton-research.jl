@@ -31,8 +31,8 @@ includet("init/_plot_settings.jl")
 #   pyplot()
 # end
 
-includet("examples/plot_axial_evolution.jl")
-includet("examples/plot_isosurfaces.jl")
+includet("plotting/plot_axial_evolution.jl")
+includet("plotting/plot_isosurfaces.jl")
 includet("utils/visual_utils.jl")
 includet("init/init.jl")
 includet("utils/sim_utils.jl")

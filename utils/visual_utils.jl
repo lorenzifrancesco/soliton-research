@@ -1,6 +1,7 @@
 
 function single_shot_dynamics(sim::Sim{1, Array{Complex{Float64}}})
-    sol = runsim(sim)
+    elaps = @elapsed sol = runsim(sim; info=true)
+    @info "elapsed time: " elaps
     u = sol.u
     t = sol.t
     @info size(u)

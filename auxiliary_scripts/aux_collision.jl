@@ -7,12 +7,13 @@ function collide(
   # FIXME
   # FFTW.set_num_threads(1)
   gamma = 0.65
-  sd = load_parameters_alt(gamma_param=gamma; eqs=["G1","N", "Np"], nosaves=true)
+  # add nosaves option
+  sd = load_parameters_alt(gamma_param=gamma; eqs=["G1","N", "Np"])
   prepare_for_collision!(sd, gamma; use_precomputed_gs=true)
   meas = []
   # for (name, sim) in sd
   # @info "\t Computing collision for" name
-  sim = sd["Np"]
+  sim = sd["G1"]
 
   imprint_vel_set_bar!(sim; vv=vv, bb=bb)
 
@@ -24,7 +25,7 @@ function collide(
 
   if true
     @unpack_Sim sim
-    dt = 0.1
+    dt = 0.001
     @pack_Sim! sim
     @info "____________________________"
     @info "Computing the transmission"
@@ -34,6 +35,11 @@ function collide(
     final = xspace(sol.u[end], sim)
     plot_final_density(sol.u, sim, label="final"; show=true)
 
+    ht = plot_axial_heatmap(sol.u, sim.t, sim; show=true, title="dt=$dt")
+    # heatmap(abs2.(sol.u))
+    display(ht)
+    savefig(ht, "media/heatmap.pdf")
+      # readline()
     tran = ns(final, sim, mask_tran)
     refl = ns(final, sim, mask_refl)
     @assert isapprox(tran + refl, 1.0, atol=1e-3)

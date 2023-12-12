@@ -4,6 +4,7 @@ function plot_axial_heatmap(u, time_axis, sim::Sim{1, Array{ComplexF64}}; info=f
     doifft ? u = mapslices(x->xspace(x, sim),u,dims=(1)) : nothing
     ht = Plots.heatmap(real.(x), t, abs2.(u)', title=title)
     show ? display(ht) : nothing
+    savefig(ht, "media/tmp.pdf")
     return ht
 end
 

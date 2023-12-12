@@ -5,8 +5,8 @@ function tiles(;
   return_maximum=false,
   tile_number=2)
   
-  # FIXME
-  FFTW.set_num_threads(1)
+  # # FIXME
+  # FFTW.set_num_threads(1)
   pyplot()
   if Threads.nthreads() == 1
     @warn "running in single thread mode!"
@@ -20,10 +20,13 @@ function tiles(;
   for gamma in gamma_list
     @info "==== Using gamma: " gamma
     equation_selection = ["Np"]
+    @info "_____________________________"
+    @info "\tpreparing"
     sd = load_parameters_alt(gamma_param=gamma; nosaves=true)
     sd = filter(p -> (first(p) in equation_selection), sd)
-    @info "Required simulations: " keys(sd)
-    prepare_for_collision!(sd, gamma)
+    @info "\tRequired simulations: " keys(sd)
+    @info "\tsetting ground state"
+    @time prepare_for_collision!(sd, gamma; use_precomputed_gs=true)
 
     # check the extremes for stability
     if false
@@ -47,8 +50,9 @@ function tiles(;
       JLD2.save(save_path * "tile_dict.jld2", tile_dict)
     end
 
+    @info "_____________________________"
     for (name, sim) in sd
-      @info "======>Tiling " name
+      @info "\tTiling " name
       if haskey(tile_dict, hs(name, gamma)) && use_precomputed_tiles
         @info "Already found tile for " name, gamma
       else
