@@ -15,9 +15,9 @@ function tiles(;
 
   for gamma in gamma_list
     @info "==== Using gamma: " gamma
-    sd = load_parameters_alt(gamma_param=gamma; eqs=["Np"], nosaves=true)
+    sd = load_parameters_alt(gamma_param=gamma; nosaves=true)
     @info "Required simulations: " keys(sd)
-    prepare_for_collision!(sd, gamma)
+    # prepare_for_collision!(sd, gamma)
 
     # check the extremes for stability
     if false

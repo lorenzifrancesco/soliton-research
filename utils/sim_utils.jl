@@ -78,7 +78,12 @@ function prepare_in_ground_state!(sim::Sim{3, CuArray{Complex{Float64}}})
     return sim
 end
 
-function prepare_for_collision!(sd, gamma; use_precomputed_gs=false, info=false)
+function prepare_for_collision!(
+    sd,
+    gamma; 
+    use_precomputed_gs=false, 
+    info=false
+    )
     save_path = "results/"
     if isfile(save_path * "gs_dict.jld2")
         @info "[Loading GS library...]"
@@ -94,8 +99,10 @@ function prepare_for_collision!(sd, gamma; use_precomputed_gs=false, info=false)
             @info "---> Found in library item " (name, gamma)
         else
             @info "---> Computing item..." (name, gamma)
+            @warn "one"
             uu = get_ground_state(sim; info=info)
             push!(gs_dict, hs(name, gamma) => uu)
+            @warn "two"
             JLD2.save(save_path * "gs_dict.jld2", gs_dict)
         end
         uu = JLD2.load(save_path * "gs_dict.jld2", hs(name, gamma))
@@ -110,6 +117,8 @@ function prepare_for_collision!(sd, gamma; use_precomputed_gs=false, info=false)
             psi_0 = uu
             xspace!(psi_0, sim)
             psi_0 .= circshift(psi_0, shift)
+            @info length(psi_0)
+            @info N
             kspace!(psi_0, sim)
             @assert isapprox(nsk(psi_0, sim), 1.0, atol=1e-9)
             time_steps  = Int(ceil((tf-ti)/dt))

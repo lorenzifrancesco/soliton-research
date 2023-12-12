@@ -349,6 +349,7 @@ end
 
 function get_ground_state(sim; info=false)
   @assert sim.iswitch == -im
+  @warn "one half"
   res = Array(runsim(sim; info=info).u)
   @assert size(res) == sim.N
   return res

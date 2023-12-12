@@ -37,7 +37,6 @@ includet("utils/visual_utils.jl")
 includet("init/init.jl")
 includet("utils/sim_utils.jl")
 
-
 includet("scripts/solitons.jl")
 
 includet("scripts/lines.jl")
